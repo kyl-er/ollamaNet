@@ -1,5 +1,21 @@
 import subprocess
+import threading
+import time
 from llm_axe import OnlineAgent, OllamaChat
+
+def display_splash_screen():
+    green_color_code = "\033[92m"
+    reset_color_code = "\033[0m"
+    splash_art = """
+ ██████╗ ██╗     ██╗      █████╗ ███╗   ███╗ █████╗     ███╗   ██╗███████╗████████╗
+██╔═══██╗██║     ██║     ██╔══██╗████╗ ████║██╔══██╗    ████╗  ██║██╔════╝╚══██╔══╝
+██║   ██║██║     ██║     ███████║██╔████╔██║███████║    ██╔██╗ ██║█████╗     ██║   
+██║   ██║██║     ██║     ██╔══██║██║╚██╔╝██║██╔══██║    ██║╚██╗██║██╔══╝     ██║   
+╚██████╔╝███████╗███████╗██║  ██║██║ ╚═╝ ██║██║  ██║    ██║ ╚████║███████╗   ██║   
+ ╚═════╝ ╚══════╝╚══════╝╚═╝  ╚═╝╚═╝     ╚═╝╚═╝  ╚═╝    ╚═╝  ╚═══╝╚══════╝   ╚═╝        
+    """
+    print(f"{green_color_code}{splash_art}{reset_color_code}")
+    print("Welcome to the Ollama Model Selector and Prompt Processor!\n")
 
 def get_ollama_models():
     """
@@ -45,7 +61,22 @@ def get_user_prompt():
     """
     return input("Enter your prompt: ")
 
+def spinning_loader(stop_event):
+    """
+    Displays a spinning ASCII loader until the stop_event is set.
+    """
+    spinner_frames = ["|", "/", "-", "\\"]
+    idx = 0
+    while not stop_event.is_set():
+        print(f"\rProcessing your request... {spinner_frames[idx]}", end="", flush=True)
+        idx = (idx + 1) % len(spinner_frames)
+        time.sleep(0.1)
+    print("\rProcessing complete!          ")  # Clear the spinner and print completion message
+
 def main():
+    # Display the splash screen
+    display_splash_screen()
+    
     # Step 1: Get the list of available models
     models = get_ollama_models()
     
@@ -67,7 +98,20 @@ def main():
     
     # Step 5: Run the prompt through the model
     print("\nProcessing your request...\n")
+    
+    # Start the spinning loader in a separate thread
+    stop_event = threading.Event()
+    loader_thread = threading.Thread(target=spinning_loader, args=(stop_event,))
+    loader_thread.start()
+    
+    # Process the prompt
     resp = online_agent.search(prompt)
+    
+    # Stop the spinning loader
+    stop_event.set()
+    loader_thread.join()
+    
+    # Display the response
     print(resp)
 
 if __name__ == "__main__":

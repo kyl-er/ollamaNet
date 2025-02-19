@@ -66,4 +66,5 @@ ollama==0.4.7
 ### Emir Sahin
 This project was made possible by Emir Sahin's work, who created llm-axe. My goal here was to expand upon the idea, make it more accessible and add API access.
 [Enhancing Local LLMs: Give Your Local LLM Internet Access Using Python by Emir Sahin](https://medium.com/@emirsah1/enhancing-local-llms-how-to-connect-your-llm-to-the-internet-using-python-4abfebbd4536)
+[Emir Sahin, GitHub: llm-axe](https://github.com/emirsahin1/llm-axe)
 

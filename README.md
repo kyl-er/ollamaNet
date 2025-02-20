@@ -52,12 +52,14 @@ ollama pull deepseek-r1:1.5b
 
 **Run requirements.txt**
 ```
-llm_axe==1.1.9
-ollama==0.4.7
-```
+pip install -r requirements.txt
+``` 
 
 ## Usage
-### CLI Application
+### CLI Application  
+```
+python3 run_terminal.py
+```
 ![CLI](ollamanet.gif)
 
 
